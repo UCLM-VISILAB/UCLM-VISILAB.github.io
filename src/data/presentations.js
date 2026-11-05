@@ -18,11 +18,10 @@ export const presentations = [
       {
         id: '1',
         slug: '1',
-        title: 'Slide 1',
-        subtitle: 'Subtítulo #1',
+        title: 'Pista - 1 - SALA ACUA',
+        subtitle: 'Sala ACUA',
         images: [
-          'media/acua/images/slide-1.svg',
-          'media/acua/images/slide-1-detail.svg'
+          'media/acua/images/slide-1.jpg',
         ],
         audio: 'media/acua/audio/slide-1.mp3',
         durationSec: 60,

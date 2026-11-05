@@ -14,6 +14,13 @@ export function useAudioPlayer({ audioSrc, transcript, durationSec = 60, onEnded
   const fallbackIntervalRef = useRef(null);
   const speechUtteranceRef = useRef(null);
 
+  // App pasa una función nueva en cada render: se guarda en una ref para que
+  // no reinicie los efectos que crean y reproducen el audio.
+  const onEndedRef = useRef(onEnded);
+  useEffect(() => {
+    onEndedRef.current = onEnded;
+  }, [onEnded]);
+
   // Stop everything
   const stopAll = useCallback(() => {
     if (audioRef.current) {
@@ -67,7 +74,7 @@ export function useAudioPlayer({ audioSrc, transcript, durationSec = 60, onEnded
     const handleEnded = () => {
       setIsPlaying(false);
       setCurrentTime(0);
-      if (onEnded) onEnded();
+      onEndedRef.current?.();
     };
 
     const handleError = () => {
@@ -91,7 +98,7 @@ export function useAudioPlayer({ audioSrc, transcript, durationSec = 60, onEnded
       audio.pause();
       audio.src = '';
     };
-  }, [audioSrc, durationSec, onEnded, stopAll]);
+  }, [audioSrc, durationSec, stopAll]);
 
   // Update playback rate when changed
   useEffect(() => {
@@ -115,7 +122,7 @@ export function useAudioPlayer({ audioSrc, transcript, durationSec = 60, onEnded
             setIsPlaying(false);
             setCurrentTime(0);
             speechUtteranceRef.current = null;
-            if (onEnded) onEnded();
+            onEndedRef.current?.();
           };
           utter.onerror = () => {
             speechUtteranceRef.current = null;
@@ -138,7 +145,7 @@ export function useAudioPlayer({ audioSrc, transcript, durationSec = 60, onEnded
             setIsPlaying(false);
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             speechUtteranceRef.current = null;
-            if (onEnded) onEnded();
+            onEndedRef.current?.();
             return 0;
           }
           return next;
@@ -160,19 +167,20 @@ export function useAudioPlayer({ audioSrc, transcript, durationSec = 60, onEnded
         fallbackIntervalRef.current = null;
       }
     };
-  }, [isPlaying, isFallbackMode, duration, playbackRate, transcript, onEnded]);
+  }, [isPlaying, isFallbackMode, duration, playbackRate, transcript]);
 
   // Play / Pause toggle
   const togglePlay = useCallback(() => {
     if (isPlaying) {
-      if (hasRealAudio && audioRef.current) {
+      if (!isFallbackMode && audioRef.current) {
         audioRef.current.pause();
       } else if (isFallbackMode && 'speechSynthesis' in window) {
         window.speechSynthesis.pause();
       }
       setIsPlaying(false);
     } else {
-      if (hasRealAudio && audioRef.current) {
+      // No se espera a hasRealAudio: algunos móviles no cargan los metadatos hasta play().
+      if (!isFallbackMode && audioRef.current) {
         audioRef.current.play().then(() => {
           setIsPlaying(true);
         }).catch((err) => {
@@ -189,7 +197,7 @@ export function useAudioPlayer({ audioSrc, transcript, durationSec = 60, onEnded
         setIsPlaying(true);
       }
     }
-  }, [isPlaying, hasRealAudio, isFallbackMode]);
+  }, [isPlaying, isFallbackMode]);
 
   // Seek to specific second
   const seek = useCallback((newTime) => {
