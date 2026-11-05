@@ -1,88 +1,110 @@
 /**
- * Configuración de Presentaciones y Slides para la Audioguía Móvil.
- * 
- * Cada presentación tiene su propio subenlace (ej: #/acua)
- * Cada slide tiene su propio subenlace (ej: #/acua/1, #/acua/2)
- * Cada slide puede tener una o varias imágenes (array en `images`).
- * Las rutas de imágenes y audios son relativas (sin "/" inicial) para que
- * funcionen tanto en la raíz del dominio como en una subcarpeta.
+ * Presentaciones y slides de la Audioguía Móvil, detectadas desde public/media:
+ *
+ *   public/media/<presentación>/images/slide-<slide>.<ext>
+ *   public/media/<presentación>/images/slide-<slide>-<orden>.<ext>
+ *   public/media/<presentación>/audio/slide-<slide>.<ext>
+ *
+ * Cada presentación tiene su propio subenlace (ej: #/acua) y cada slide el suyo
+ * (ej: #/acua/1). Las rutas son relativas (sin "/" inicial) para que funcionen
+ * tanto en la raíz del dominio como en una subcarpeta.
  */
+import mediaFiles from 'virtual:media-files';
 
-export const presentations = [
-  {
-    id: 'acua',
-    slug: 'acua',
+/**
+ * Textos que no se pueden deducir de los archivos. Todos son opcionales: sin
+ * entrada, el título es "Slide <número>" y la presentación usa el nombre de su carpeta.
+ */
+const texts = {
+  acua: {
     title: 'ACUA',
     subtitle: 'Subtítulo de la presentación',
-    slides: [
-      {
-        id: '1',
-        slug: '1',
+    slides: {
+      1: {
         title: 'Pista - 1 - SALA ACUA',
         subtitle: 'Sala ACUA',
-        images: [
-          'media/acua/images/slide-1.jpg',
-        ],
-        audio: 'media/acua/audio/slide-1.mp3',
-        durationSec: 60,
-        durationFormatted: '01:00',
         text: 'Texto de ejemplo #1. Este es un texto de prueba para el primer slide de la presentación.'
       },
-      {
-        id: '2',
-        slug: '2',
+      2: {
         title: 'Slide 2',
         subtitle: 'Subtítulo #2',
-        images: [
-          'media/acua/images/slide-2.svg'
-        ],
-        audio: 'media/acua/audio/slide-2.mp3',
-        durationSec: 60,
-        durationFormatted: '01:00',
         text: 'Texto de ejemplo #2. Este es un texto de prueba para el segundo slide de la presentación.'
       },
-      {
-        id: '3',
-        slug: '3',
+      3: {
         title: 'Slide 3',
         subtitle: 'Subtítulo #3',
-        images: [
-          'media/acua/images/slide-3.svg'
-        ],
-        audio: 'media/acua/audio/slide-3.mp3',
-        durationSec: 60,
-        durationFormatted: '01:00',
         text: 'Texto de ejemplo #3. Este es un texto de prueba para el tercer slide de la presentación.'
       },
-      {
-        id: '4',
-        slug: '4',
+      4: {
         title: 'Slide 4',
         subtitle: 'Subtítulo #4',
-        images: [
-          'media/acua/images/slide-4.svg'
-        ],
-        audio: 'media/acua/audio/slide-4.mp3',
-        durationSec: 60,
-        durationFormatted: '01:00',
         text: 'Texto de ejemplo #4. Este es un texto de prueba para el cuarto slide de la presentación.'
       },
-      {
-        id: '5',
-        slug: '5',
+      5: {
         title: 'Slide 5',
         subtitle: 'Subtítulo #5',
-        images: [
-          'media/acua/images/slide-5.svg'
-        ],
-        audio: 'media/acua/audio/slide-5.mp3',
-        durationSec: 60,
-        durationFormatted: '01:00',
         text: 'Texto de ejemplo #5. Este es un texto de prueba para el quinto slide de la presentación.'
       }
-    ]
+    }
   }
-];
+};
+
+const IMAGE_FILE = /^([^/]+)\/images\/slide-(\d+)(?:-(\d+))?\.(?:jpe?g|png|webp|svg)$/i;
+const AUDIO_FILE = /^([^/]+)\/audio\/slide-(\d+)\.(?:mp3|m4a|ogg|wav)$/i;
+
+function buildPresentations(files) {
+  const slidesByPresentation = new Map();
+
+  const getSlideEntry = (presentationId, slideNumber) => {
+    if (!slidesByPresentation.has(presentationId)) {
+      slidesByPresentation.set(presentationId, new Map());
+    }
+    const slides = slidesByPresentation.get(presentationId);
+    if (!slides.has(slideNumber)) {
+      slides.set(slideNumber, { images: [], audio: undefined });
+    }
+    return slides.get(slideNumber);
+  };
+
+  for (const file of files) {
+    const image = file.match(IMAGE_FILE);
+    if (image) {
+      // Una imagen sin número de orden (slide-1.jpg) va antes que las numeradas.
+      const order = image[3] === undefined ? -1 : Number(image[3]);
+      getSlideEntry(image[1], Number(image[2])).images.push({ order, path: `media/${file}` });
+    }
+
+    const audio = file.match(AUDIO_FILE);
+    if (audio) {
+      const entry = getSlideEntry(audio[1], Number(audio[2]));
+      entry.audio ??= `media/${file}`;
+    }
+  }
+
+  return [...slidesByPresentation.keys()].sort().map((id) => {
+    const presentationTexts = texts[id] ?? {};
+    const slides = [...slidesByPresentation.get(id).entries()]
+      .sort(([a], [b]) => a - b)
+      .map(([number, { images, audio }]) => ({
+        id: String(number),
+        slug: String(number),
+        title: `Slide ${number}`,
+        ...presentationTexts.slides?.[number],
+        images: images.sort((a, b) => a.order - b.order).map(({ path }) => path),
+        audio
+      }));
+
+    return {
+      id,
+      slug: id,
+      title: presentationTexts.title ?? id,
+      subtitle: presentationTexts.subtitle,
+      slides
+    };
+  });
+}
+
+export const presentations = buildPresentations(mediaFiles);
 
 export function getPresentation(slugOrId) {
   if (!slugOrId) return presentations[0];

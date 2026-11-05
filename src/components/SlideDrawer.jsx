@@ -1,5 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Volume2 } from 'lucide-react';
+
+function AudioDuration({ src }) {
+  const [duration, setDuration] = useState(null);
+
+  useEffect(() => {
+    if (!src) return;
+    const audio = new Audio();
+    audio.preload = 'metadata';
+    const handleLoaded = () => setDuration(audio.duration);
+    audio.addEventListener('loadedmetadata', handleLoaded);
+    audio.src = src;
+    return () => {
+      audio.removeEventListener('loadedmetadata', handleLoaded);
+      audio.src = '';
+    };
+  }, [src]);
+
+  if (!Number.isFinite(duration)) return null;
+
+  const minutes = Math.floor(duration / 60);
+  const seconds = String(Math.floor(duration % 60)).padStart(2, '0');
+  return <span className="text-xs font-mono text-slate-500">{minutes}:{seconds}</span>;
+}
 
 export function SlideDrawer({
   isOpen,
@@ -70,9 +93,7 @@ export function SlideDrawer({
                   {isActive && isPlaying && (
                     <Volume2 className="w-3.5 h-3.5 text-white animate-pulse" />
                   )}
-                  <span className="text-xs font-mono text-slate-500">
-                    {slide.durationFormatted}
-                  </span>
+                  <AudioDuration src={slide.audio} />
                 </div>
               </button>
             );

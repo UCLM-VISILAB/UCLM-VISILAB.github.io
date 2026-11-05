@@ -26,30 +26,53 @@ Genera la carpeta `dist/` estática, con rutas relativas.
 
 ---
 
-## 🖼️ Múltiples Imágenes por Slide
+## 🖼️ Imágenes y Audios
 
-Ahora cada slide puede tener un arreglo de imágenes en `src/data/presentations.js`:
+Las presentaciones y los slides se detectan automáticamente a partir de los archivos de `public/media/`. No hace falta editar ningún archivo de código:
 
-```javascript
-{
-  id: '1',
-  slug: '1',
-  title: 'Introducción a ACUA',
-  subtitle: 'El origen del ciclo del agua',
-  images: [
-    'media/acua/images/slide-1.svg',
-    'media/acua/images/slide-1-detail.svg'
-  ],
-  audio: 'media/acua/audio/slide-1.mp3',
-  durationFormatted: '01:45',
-  text: 'Texto descriptivo limpio y legible en pantalla.'
-}
+```text
+public/media/<presentación>/images/slide-<slide>.<ext>           Una imagen
+public/media/<presentación>/images/slide-<slide>-<orden>.<ext>   Varias imágenes
+public/media/<presentación>/audio/slide-<slide>.<ext>            Audio del slide
 ```
 
-- Si un slide tiene más de una imagen, aparece un carrusel limpio con flechas y puntos indicadores.
-- Cada imagen se puede ampliar a pantalla completa con el botón de expansión.
-- También es compatible con una sola imagen usando `images: ['ruta/imagen.jpg']` o `image: 'ruta/imagen.jpg'`.
-- Escribe las rutas sin `/` inicial, para que la web funcione tanto en la raíz del dominio como en una subcarpeta.
+Por ejemplo, estos archivos crean el slide 1 con dos imágenes y su audio, y el slide 2 con una imagen:
+
+```text
+public/media/acua/images/slide-1-1.jpg
+public/media/acua/images/slide-1-2.png
+public/media/acua/audio/slide-1.mp3
+public/media/acua/images/slide-2.svg
+```
+
+- **Imágenes:** `.jpg`, `.jpeg`, `.png`, `.webp` y `.svg`.
+- **Audios:** `.mp3`, `.m4a`, `.ogg` y `.wav`. Cada slide tiene un solo audio, vinculado por el número de slide.
+- **Orden:** los slides y las imágenes se ordenan por número. El orden de las imágenes puede ser cualquier número, y una imagen sin orden va primero.
+- **Nuevas presentaciones:** cada carpeta dentro de `public/media/` es una presentación, con su enlace `#/<carpeta>/1`.
+- **Sin audio:** el slide usa la voz sintética para leer su texto.
+- **Otros nombres:** los archivos con otro formato, como `slide-1-detalle.png`, se ignoran.
+- **Mayúsculas:** GitHub Pages las distingue en las rutas, pero la detección usa el nombre real del archivo, así que `.JPG` también funciona.
+
+Si un carrusel tiene más de una imagen, aparecen flechas y puntos indicadores. Con `npm run dev` en marcha, la página se recarga sola al añadir o quitar archivos; al publicar, se detectan en cada despliegue.
+
+### Títulos y textos
+
+Los títulos y textos son lo único que no se puede deducir de los archivos. Son opcionales y se escriben en el objeto `texts` de `src/data/presentations.js`, usando como clave el número de slide. Sin entrada, el título es `Slide <número>`:
+
+```javascript
+const texts = {
+  acua: {
+    title: 'ACUA',
+    slides: {
+      1: {
+        title: 'Introducción a ACUA',
+        subtitle: 'El origen del ciclo del agua',
+        text: 'Texto descriptivo limpio y legible en pantalla.'
+      }
+    }
+  }
+};
+```
 
 ---
 
@@ -61,11 +84,3 @@ Ahora cada slide puede tener un arreglo de imágenes en `src/data/presentations.
   - `https://uclm-visilab.github.io/#/acua/3` $\rightarrow$ Slide 3
 - Al navegar entre slides mediante los botones o deslizando con el dedo (swipe), la URL cambia dinámicamente **sin recargar la página**.
 - El icono de QR en la cabecera permite previsualizar y descargar el código QR de cualquier slide para imprimirlo en cartelería.
-
----
-
-## 📁 Subir Audios e Imágenes
-
-Coloca tus archivos en:
-- Audios: `public/media/acua/audio/slide-1.mp3`, `slide-2.mp3`, etc.
-- Imágenes: `public/media/acua/images/`
