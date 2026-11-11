@@ -215,11 +215,17 @@ export default function App() {
 
   return (
     <div 
-      className="h-full w-full flex justify-center bg-zinc-950 text-zinc-100 font-sans"
+      className="h-full w-full flex justify-center bg-[#050811] text-slate-100 font-sans relative overflow-hidden"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      <main className="relative flex flex-col h-full w-full max-w-md overflow-hidden bg-zinc-950 border-x border-zinc-800/80">
+      {/* Subtle ambient background glow */}
+      <div className="pointer-events-none fixed inset-0 flex justify-center overflow-hidden">
+        <div className="w-[460px] h-[460px] -top-32 bg-sky-500/[0.08] rounded-full blur-3xl absolute" />
+        <div className="w-[420px] h-[420px] bottom-0 bg-indigo-500/[0.07] rounded-full blur-3xl absolute" />
+      </div>
+
+      <main className="relative flex flex-col h-full w-full max-w-md overflow-hidden bg-slate-950/90 border-x border-white/[0.07] shadow-[0_0_80px_rgba(0,0,0,0.85)]">
         
         {/* Top Minimal Header */}
         <Header

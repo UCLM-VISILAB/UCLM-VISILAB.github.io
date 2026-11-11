@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
-import { X, Copy, Check, Download } from 'lucide-react';
+import { X, Copy, Check, Download, QrCode } from 'lucide-react';
 
 export function QRCodeModal({
   isOpen,
@@ -59,18 +59,26 @@ export function QRCodeModal({
       {/* Backdrop */}
       <div 
         onClick={onClose}
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity"
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-sm bg-slate-900 border border-white/10 rounded-2xl p-5 shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-sm bg-slate-900/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 shadow-[0_24px_64px_rgba(0,0,0,0.85)] z-10 animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-white/5">
-          <h3 className="text-sm font-semibold text-white">Código QR</h3>
+        <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-sky-500/10 border border-sky-400/20">
+              <QrCode className="w-4 h-4 text-sky-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white">Código QR de Acceso</h3>
+              <p className="text-[11px] text-slate-400">{presentation.title}</p>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-white rounded-lg transition"
+            className="p-1.5 text-slate-400 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] rounded-xl transition cursor-pointer"
             aria-label="Cerrar"
           >
             <X className="w-4 h-4" />
@@ -78,25 +86,25 @@ export function QRCodeModal({
         </div>
 
         {/* Slide Selector Pills */}
-        <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <div className="mt-3 p-1 rounded-xl bg-slate-950/80 border border-white/[0.06] flex gap-1 overflow-x-auto scrollbar-none">
           {presentation.slides.map((s, idx) => (
             <button
               key={s.id}
               onClick={() => setSelectedSlideId(s.id)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition ${
+              className={`flex-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition cursor-pointer ${
                 s.id === selectedSlideId
-                  ? 'bg-white text-slate-950 font-semibold'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                  ? 'bg-gradient-to-r from-sky-400 to-indigo-400 text-slate-950 font-semibold shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
               }`}
             >
-              Slide {idx + 1}
+              Pista {idx + 1}
             </button>
           ))}
         </div>
 
         {/* QR Code */}
         <div className="mt-4 flex flex-col items-center">
-          <div className="p-3 bg-white rounded-xl shadow-md">
+          <div className="p-3.5 bg-white rounded-2xl shadow-[0_8px_30px_rgba(56,189,248,0.15)] ring-4 ring-white/10">
             {qrDataUrl ? (
               <img
                 src={qrDataUrl}
@@ -109,17 +117,24 @@ export function QRCodeModal({
               </div>
             )}
           </div>
-          <p className="text-xs text-white font-medium mt-2">{activeSlide.title}</p>
+          {activeSlide.subtitle && (
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-sky-400 mt-3">
+              {activeSlide.subtitle}
+            </span>
+          )}
+          <p className="text-xs sm:text-sm text-white font-semibold mt-0.5 text-center px-2">
+            {activeSlide.title}
+          </p>
         </div>
 
         {/* URL Box */}
-        <div className="mt-3 p-2 rounded-lg bg-black/40 border border-white/5 flex items-center justify-between gap-2">
+        <div className="mt-3.5 p-2.5 rounded-xl bg-slate-950/80 border border-white/[0.07] flex items-center justify-between gap-2">
           <span className="text-[11px] font-mono text-slate-400 truncate select-all">
             {slideUrl}
           </span>
           <button
             onClick={handleCopy}
-            className="flex-shrink-0 p-1 rounded text-slate-300 hover:text-white transition flex items-center gap-1 text-[11px]"
+            className="flex-shrink-0 p-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white transition flex items-center gap-1 text-[11px] cursor-pointer"
             title="Copiar enlace"
           >
             {copied ? (
@@ -133,9 +148,9 @@ export function QRCodeModal({
         {/* Download Button */}
         <button
           onClick={handleDownload}
-          className="mt-3 w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-semibold text-xs transition"
+          className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-400 hover:from-sky-300 hover:to-indigo-300 text-slate-950 font-bold text-xs shadow-lg shadow-sky-500/20 active:scale-98 transition cursor-pointer"
         >
-          <Download className="w-3.5 h-3.5" />
+          <Download className="w-4 h-4" />
           Descargar QR (PNG)
         </button>
 
