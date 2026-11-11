@@ -34,15 +34,15 @@ export function SlideViewer({ slide }) {
   return (
     <div className="flex-1 flex flex-col px-5 pt-3 pb-24 overflow-y-auto w-full select-none">
       {/* Image Container / Minimal Carousel */}
-      <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 shadow-md flex-shrink-0 group">
+      <div className="relative w-full rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 shadow-md flex-shrink-0 group">
         {currentImageSrc ? (
           <img
             src={currentImageSrc}
             alt={slide.title}
-            className="w-full h-full object-cover pointer-events-none"
+            className="w-full max-h-[55vh] object-contain mx-auto pointer-events-none block"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs">
+          <div className="w-full aspect-[4/3] flex items-center justify-center text-zinc-500 text-xs">
             Sin imagen
           </div>
         )}

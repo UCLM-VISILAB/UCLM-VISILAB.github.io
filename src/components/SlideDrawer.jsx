@@ -27,8 +27,10 @@ function AudioDuration({ src }) {
 export function SlideDrawer({
   isOpen,
   onClose,
+  presentations = [],
   presentation,
   currentSlide,
+  onSelectPresentation,
   onSelectSlide,
   isPlaying
 }) {
@@ -61,6 +63,28 @@ export function SlideDrawer({
             <X className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Presentation Selector (when multiple presentations exist) */}
+        {presentations.length > 1 && onSelectPresentation && (
+          <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+            {presentations.map((p) => {
+              const isCurrentPres = p.id === presentation.id;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => onSelectPresentation(p)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition ${
+                    isCurrentPres
+                      ? 'bg-white text-slate-950 font-semibold'
+                      : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                  }`}
+                >
+                  {p.title}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Slides List */}
         <div className="flex-1 overflow-y-auto mt-3 space-y-1.5 pr-1">

@@ -16,7 +16,9 @@ function mediaFiles() {
     },
     load(loadedId) {
       if (loadedId !== resolvedId) return;
-      const files = readdirSync('public/media', { recursive: true }).sort();
+      const files = readdirSync('public/media', { recursive: true })
+        .map((file) => file.replaceAll('\\', '/'))
+        .sort();
       return `export default ${JSON.stringify(files)};`;
     },
     // En desarrollo, recarga la página al añadir o quitar archivos.

@@ -71,8 +71,9 @@ export default function App() {
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('popstate', handleHashChange);
 
-    const currentHash = window.location.hash;
-    if (!currentHash || currentHash === '#' || currentHash === '#/') {
+    const currentHash = window.location.hash.replace(/^#\/?/, '');
+    const parts = currentHash.split('/').filter(Boolean);
+    if (parts.length < 2) {
       navigateTo(currentPresentation, currentSlide, true);
     }
 
@@ -81,6 +82,13 @@ export default function App() {
       window.removeEventListener('popstate', handleHashChange);
     };
   }, [parseHash, navigateTo, currentPresentation, currentSlide]);
+
+  // Update document title dynamically based on active presentation
+  useEffect(() => {
+    if (currentPresentation?.title) {
+      document.title = `Audioguía Móvil - ${currentPresentation.title}`;
+    }
+  }, [currentPresentation]);
 
   // Audio player hook
   const {
@@ -268,8 +276,10 @@ export default function App() {
         <SlideDrawer
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
+          presentations={presentations}
           presentation={currentPresentation}
           currentSlide={currentSlide}
+          onSelectPresentation={(p) => navigateTo(p, p.slides[0])}
           onSelectSlide={(s) => navigateTo(currentPresentation, s)}
           isPlaying={isPlaying}
         />

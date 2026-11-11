@@ -46,6 +46,27 @@ const texts = {
         text: 'Texto de ejemplo #5. Este es un texto de prueba para el quinto slide de la presentación.'
       }
     }
+  },
+  etsii: {
+    title: 'ETSII • MICROLIVE',
+    subtitle: 'Exposición de la E.T.S. de Ingeniería Industrial de Ciudad Real',
+    slides: {
+      1: {
+        title: 'De los ojos del escriba al ojo que ve los átomos',
+        subtitle: 'MICROLIVE – Parte 1',
+        text: 'Historia de la microscopía, Santiago Ramón y Cajal y técnicas de observación.'
+      },
+      2: {
+        title: 'Aplicaciones de la microscopía',
+        subtitle: 'MICROLIVE – Parte 2',
+        text: 'Arqueología, paleontología, hematología, histología, genética, parasitología, protistología, hidrobiología y geología.'
+      },
+      3: {
+        title: 'Del microscopio al dato',
+        subtitle: 'MICROLIVE – Parte 3',
+        text: 'Procesado de imagen, inteligencia artificial e innovación. Demostraciones: observar, capturar, medir y analizar.'
+      }
+    }
   }
 };
 
