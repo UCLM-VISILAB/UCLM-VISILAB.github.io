@@ -78,9 +78,14 @@ const texts = {
 
 ## 🔗 Subenlaces y Códigos QR
 
-- Cada slide tiene su subenlace directo:
-  - `https://uclm-visilab.github.io/#/acua/1` $\rightarrow$ Slide 1
-  - `https://uclm-visilab.github.io/#/acua/2` $\rightarrow$ Slide 2
-  - `https://uclm-visilab.github.io/#/acua/3` $\rightarrow$ Slide 3
+- Cada presentación y slide tiene su subenlace directo:
+  - **ETSII (MICROLIVE):**
+    - `https://uclm-visilab.github.io/#/etsii/1` $\rightarrow$ Parte 1: De los ojos del escriba al ojo que ve los átomos
+    - `https://uclm-visilab.github.io/#/etsii/2` $\rightarrow$ Parte 2: Aplicaciones de la microscopía
+    - `https://uclm-visilab.github.io/#/etsii/3` $\rightarrow$ Parte 3: Del microscopio al dato
+  - **ACUA:**
+    - `https://uclm-visilab.github.io/#/acua/1` $\rightarrow$ Slide 1
+    - `https://uclm-visilab.github.io/#/acua/2` $\rightarrow$ Slide 2
+    - `https://uclm-visilab.github.io/#/acua/3` $\rightarrow$ Slide 3
 - Al navegar entre slides mediante los botones o deslizando con el dedo (swipe), la URL cambia dinámicamente **sin recargar la página**.
 - El icono de QR en la cabecera permite previsualizar y descargar el código QR de cualquier slide para imprimirlo en cartelería.

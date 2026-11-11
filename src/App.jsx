@@ -182,31 +182,45 @@ export default function App() {
     isPointerDown.current = true;
     touchStartX.current = e.clientX;
     touchStartY.current = e.clientY;
-    isHorizontalSwipe.current = true;
-    setIsDragging(true);
+    isHorizontalSwipe.current = null;
   };
 
   const handleMouseMove = (e) => {
     if (!isPointerDown.current) return;
     const diffX = e.clientX - touchStartX.current;
-    const isAtStart = currentSlideIndex === 0 && diffX > 0;
-    const isAtEnd = currentSlideIndex === currentPresentation.slides.length - 1 && diffX < 0;
+    const diffY = e.clientY - touchStartY.current;
 
-    if (isAtStart || isAtEnd) {
-      setDragOffset(diffX * 0.25);
-    } else {
-      setDragOffset(diffX);
+    if (isHorizontalSwipe.current === null) {
+      if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
+        isHorizontalSwipe.current = Math.abs(diffX) > Math.abs(diffY);
+        if (isHorizontalSwipe.current) {
+          setIsDragging(true);
+        }
+      }
+    }
+
+    if (isHorizontalSwipe.current === true) {
+      const isAtStart = currentSlideIndex === 0 && diffX > 0;
+      const isAtEnd = currentSlideIndex === currentPresentation.slides.length - 1 && diffX < 0;
+
+      if (isAtStart || isAtEnd) {
+        setDragOffset(diffX * 0.25);
+      } else {
+        setDragOffset(diffX);
+      }
     }
   };
 
   const handleMouseUp = () => {
     if (!isPointerDown.current) return;
     isPointerDown.current = false;
-    const threshold = 55;
-    if (dragOffset < -threshold && hasNextSlide) {
-      handleNextSlide();
-    } else if (dragOffset > threshold && hasPrevSlide) {
-      handlePrevSlide();
+    if (isHorizontalSwipe.current === true && isDragging) {
+      const threshold = 55;
+      if (dragOffset < -threshold && hasNextSlide) {
+        handleNextSlide();
+      } else if (dragOffset > threshold && hasPrevSlide) {
+        handlePrevSlide();
+      }
     }
     setIsDragging(false);
     setDragOffset(0);
@@ -215,17 +229,11 @@ export default function App() {
 
   return (
     <div 
-      className="h-full w-full flex justify-center bg-[#050811] text-slate-100 font-sans relative overflow-hidden"
+      className="h-dvh w-full flex justify-center bg-slate-50 text-slate-900 font-sans overflow-hidden"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      {/* Subtle ambient background glow */}
-      <div className="pointer-events-none fixed inset-0 flex justify-center overflow-hidden">
-        <div className="w-[460px] h-[460px] -top-32 bg-sky-500/[0.08] rounded-full blur-3xl absolute" />
-        <div className="w-[420px] h-[420px] bottom-0 bg-indigo-500/[0.07] rounded-full blur-3xl absolute" />
-      </div>
-
-      <main className="relative flex flex-col h-full w-full max-w-md overflow-hidden bg-slate-950/90 border-x border-white/[0.07] shadow-[0_0_80px_rgba(0,0,0,0.85)]">
+      <main className="relative flex flex-col h-full w-full max-w-md overflow-hidden bg-white border-x border-slate-200">
         
         {/* Top Minimal Header */}
         <Header
@@ -238,7 +246,7 @@ export default function App() {
 
         {/* Whole Page Horizontal Slide Track */}
         <div 
-          className="flex-1 w-full overflow-hidden flex relative touch-pan-y cursor-grab active:cursor-grabbing"
+          className="flex-1 min-h-0 w-full overflow-hidden relative"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -254,7 +262,7 @@ export default function App() {
             {currentPresentation.slides.map((slide) => (
               <div 
                 key={slide.id} 
-                className="w-full h-full flex-shrink-0 flex flex-col overflow-hidden"
+                className="w-full h-full min-h-0 flex-shrink-0 overflow-hidden"
               >
                 <SlideViewer slide={slide} />
               </div>

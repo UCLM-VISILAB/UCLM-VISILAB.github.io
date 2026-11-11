@@ -4,8 +4,8 @@ import {
   Pause, 
   RotateCcw, 
   RotateCw, 
-  SkipBack, 
-  SkipForward
+  ChevronLeft, 
+  ChevronRight
 } from 'lucide-react';
 
 function formatTime(seconds) {
@@ -32,11 +32,11 @@ export function AudioPlayer({
   const progressPercent = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 bg-slate-950/90 backdrop-blur-2xl border-t border-white/[0.08] shadow-[0_-12px_40px_rgba(0,0,0,0.7)] px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,8px)+12px)] select-none">
+    <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-sm border-t border-slate-200 px-5 pt-2.5 pb-[calc(env(safe-area-inset-bottom,8px)+10px)] select-none">
       <div className="max-w-md mx-auto">
         
         {/* Scrubber / Timeline Slider */}
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <input
             type="range"
             min="0"
@@ -46,90 +46,75 @@ export function AudioPlayer({
             onChange={(e) => onSeek(parseFloat(e.target.value))}
             className="audio-scrubber w-full cursor-pointer focus:outline-none"
             style={{
-              background: `linear-gradient(to right, #38bdf8 0%, #818cf8 ${progressPercent}%, rgba(255, 255, 255, 0.12) ${progressPercent}%)`
+              background: `linear-gradient(to right, #0f172a ${progressPercent}%, #e2e8f0 ${progressPercent}%)`
             }}
             aria-label="Línea de tiempo"
           />
 
-          <div className="flex justify-between items-center text-[11px] font-mono tabular-nums text-slate-400">
-            <span className="text-sky-300/90 font-medium">{formatTime(currentTime)}</span>
-            {isPlaying ? (
-              <div className="flex items-end gap-0.5 h-3.5 px-2" aria-hidden="true">
-                <span className="w-0.5 bg-sky-400 rounded-full animate-eq-1" />
-                <span className="w-0.5 bg-indigo-400 rounded-full animate-eq-2" />
-                <span className="w-0.5 bg-sky-400 rounded-full animate-eq-3" />
-              </div>
-            ) : (
-              <span className="text-[10px] uppercase tracking-widest text-slate-500 font-sans">
-                Audioguía
-              </span>
-            )}
+          <div className="flex justify-between items-center text-[11px] font-mono tabular-nums text-slate-500">
+            <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
           </div>
         </div>
 
-        {/* Main Controls Row */}
-        <div className="mt-1.5 flex items-center justify-between">
+        {/* Minimal Controls */}
+        <div className="mt-0.5 flex items-center justify-between">
           
-          {/* Speed pill button */}
+          {/* Speed button */}
           <button
             onClick={onCyclePlaybackRate}
-            className="min-w-[46px] text-xs font-mono font-semibold text-slate-300 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] px-2.5 py-1.5 rounded-xl transition active:scale-95 cursor-pointer"
-            title="Velocidad de reproducción"
+            className="text-xs font-mono font-medium text-slate-600 hover:text-slate-950 px-2 py-1 rounded-md hover:bg-slate-100 transition cursor-pointer"
+            title="Velocidad"
           >
             {playbackRate}x
           </button>
 
-          {/* Center Transport Controls */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Main Controls */}
+          <div className="flex items-center gap-3">
             
             {/* Prev Slide */}
             <button
               onClick={onPrevSlide}
               disabled={!hasPrevSlide}
-              className={`p-2.5 rounded-xl transition ${
+              className={`p-2 transition ${
                 hasPrevSlide 
-                  ? 'text-slate-300 hover:text-white hover:bg-white/[0.06] active:scale-90 cursor-pointer' 
-                  : 'text-slate-700 cursor-not-allowed'
+                  ? 'text-slate-700 hover:text-slate-950 active:scale-95 cursor-pointer' 
+                  : 'text-slate-300 cursor-not-allowed'
               }`}
               aria-label="Slide anterior"
               title="Slide anterior"
             >
-              <SkipBack className="w-4 h-4" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
 
             {/* Skip back 10s */}
             <button
               onClick={() => onSkip(-10)}
-              className="flex flex-col items-center justify-center p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.06] transition active:scale-90 cursor-pointer"
-              aria-label="Retroceder 10 segundos"
+              className="p-2 text-slate-600 hover:text-slate-950 transition active:scale-95 cursor-pointer"
+              aria-label="-10s"
               title="-10s"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
 
-            {/* Play/Pause Hero Button */}
+            {/* Play/Pause */}
             <button
               onClick={onTogglePlay}
-              className={`relative w-13 h-13 rounded-full flex items-center justify-center transition-all duration-200 active:scale-92 cursor-pointer ${
-                isPlaying
-                  ? 'bg-gradient-to-tr from-sky-400 via-cyan-300 to-white text-slate-950 shadow-[0_0_28px_rgba(56,189,248,0.55)]'
-                  : 'bg-white text-slate-950 hover:bg-sky-50 shadow-[0_4px_20px_rgba(255,255,255,0.25)]'
-              }`}
+              className="w-11 h-11 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-slate-800 active:scale-95 transition cursor-pointer"
               aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 fill-slate-950" />
+                <Pause className="w-5 h-5 fill-white" />
               ) : (
-                <Play className="w-5 h-5 fill-slate-950 translate-x-0.5" />
+                <Play className="w-5 h-5 fill-white translate-x-0.5" />
               )}
             </button>
 
             {/* Skip forward 10s */}
             <button
               onClick={() => onSkip(10)}
-              className="flex flex-col items-center justify-center p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.06] transition active:scale-90 cursor-pointer"
-              aria-label="Adelantar 10 segundos"
+              className="p-2 text-slate-600 hover:text-slate-950 transition active:scale-95 cursor-pointer"
+              aria-label="+10s"
               title="+10s"
             >
               <RotateCw className="w-4 h-4" />
@@ -139,25 +124,21 @@ export function AudioPlayer({
             <button
               onClick={onNextSlide}
               disabled={!hasNextSlide}
-              className={`p-2.5 rounded-xl transition ${
+              className={`p-2 transition ${
                 hasNextSlide 
-                  ? 'text-slate-300 hover:text-white hover:bg-white/[0.06] active:scale-90 cursor-pointer' 
-                  : 'text-slate-700 cursor-not-allowed'
+                  ? 'text-slate-700 hover:text-slate-950 active:scale-95 cursor-pointer' 
+                  : 'text-slate-300 cursor-not-allowed'
               }`}
               aria-label="Slide siguiente"
               title="Slide siguiente"
             >
-              <SkipForward className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </button>
 
           </div>
 
-          {/* Right spacer to keep transport centered */}
-          <div className="min-w-[46px] flex justify-end">
-            <span className="text-[10px] font-mono text-slate-500 px-1.5 py-1">
-              ±10s
-            </span>
-          </div>
+          {/* Placeholder spacer to balance layout */}
+          <div className="w-8" />
 
         </div>
 
