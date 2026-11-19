@@ -23,28 +23,8 @@ const texts = {
       1: {
         title: 'Pista - 1 - SALA ACUA',
         subtitle: 'Sala ACUA',
-        text: 'Texto de ejemplo #1. Este es un texto de prueba para el primer slide de la presentación.'
+        text: ''
       },
-      2: {
-        title: 'Slide 2',
-        subtitle: 'Subtítulo #2',
-        text: 'Texto de ejemplo #2. Este es un texto de prueba para el segundo slide de la presentación.'
-      },
-      3: {
-        title: 'Slide 3',
-        subtitle: 'Subtítulo #3',
-        text: 'Texto de ejemplo #3. Este es un texto de prueba para el tercer slide de la presentación.'
-      },
-      4: {
-        title: 'Slide 4',
-        subtitle: 'Subtítulo #4',
-        text: 'Texto de ejemplo #4. Este es un texto de prueba para el cuarto slide de la presentación.'
-      },
-      5: {
-        title: 'Slide 5',
-        subtitle: 'Subtítulo #5',
-        text: 'Texto de ejemplo #5. Este es un texto de prueba para el quinto slide de la presentación.'
-      }
     }
   },
   etsii: {
@@ -138,10 +118,10 @@ export function getSlide(presentation, slideSlugOrId) {
   if (!slideSlugOrId) return presentation.slides[0];
 
   const normalized = String(slideSlugOrId).toLowerCase().trim();
-  
+
   // Buscar por slug o id
-  const match = presentation.slides.find(s => 
-    s.slug.toLowerCase() === normalized || 
+  const match = presentation.slides.find(s =>
+    s.slug.toLowerCase() === normalized ||
     s.id.toLowerCase() === normalized ||
     `slide-${s.id}`.toLowerCase() === normalized
   );

@@ -194,7 +194,7 @@ def generate_placard_card(slide_item: dict, logo_img: Image.Image = None) -> Ima
         draw.text((pill_x + 24, pill_y + (pill_h - bh) // 2 - 2), label, fill=DARK_BLUE, font=font_badge)
         
         font_sub = get_system_font(14, bold=True)
-        sub_text = 'A U D I O G U Í A   •   E T S I I'
+        sub_text = 'A U D I O G U Í A   •   A C U A'
         sbox = draw.textbbox((0, 0), sub_text, font=font_sub)
         sw = sbox[2] - sbox[0]
         draw.text(((CARD_WIDTH - sw) // 2, 146), sub_text, fill=MUTED_TEXT, font=font_sub)
@@ -206,7 +206,7 @@ def generate_placard_card(slide_item: dict, logo_img: Image.Image = None) -> Ima
         draw.text(((CARD_WIDTH - mw) // 2, 95), main_text, fill=DARK_BLUE, font=font_main)
         
         font_sub = get_system_font(18, bold=True)
-        sub_text = 'E T S I I'
+        sub_text = 'A C U A'
         sbox = draw.textbbox((0, 0), sub_text, font=font_sub)
         sw = sbox[2] - sbox[0]
         draw.text(((CARD_WIDTH - sw) // 2, 144), sub_text, fill=MUTED_TEXT, font=font_sub)
