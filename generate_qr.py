@@ -19,9 +19,8 @@ from PIL import Image, ImageDraw, ImageFont
 # CONFIGURACIÓN Y ENLACES
 # -----------------------------------------------------------------------------
 LINKS = [
-    {"id": "1", "label": "Parte 1",      "url": "https://uclm-visilab.github.io/#/etsii/1"},
-    {"id": "2", "label": "Parte 2",      "url": "https://uclm-visilab.github.io/#/etsii/2"},
-    {"id": "3", "label": "Parte 3",      "url": "https://uclm-visilab.github.io/#/etsii/3"}
+    {"id": "1", "label": "Audioguía",      "url": "https://uclm-visilab.github.io/#/acua/1"},
+    {"id": "1", "label": "Audioguía",      "url": "https://uclm-visilab.github.io/#/acua/1"}
 ]
 
 # Paleta de Colores
